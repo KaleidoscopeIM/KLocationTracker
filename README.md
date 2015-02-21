@@ -1,5 +1,5 @@
 # KLocationTracker
-KLocationTracker is a background service capable of tracking device location.\n
+KLocationTracker is a background service capable of tracking device location.<br>
 It can send data on server and it can encrypt it using AES-128 bit ECB algorithm. 
 This service is completely configurable by one of its class "KTrackerConfiguration".
 
