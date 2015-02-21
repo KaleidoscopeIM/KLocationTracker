@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <issue id="SimpleDateFormat">
+        <ignore path="src/com/kaleidoscope/klocationtracker/KTokenServices.java" />
+    </issue>
+    <issue id="TrulyRandom">
+        <ignore path="src/com/kaleidoscope/klocationtracker/KTokenServices.java" />
+    </issue>
+</lint>
