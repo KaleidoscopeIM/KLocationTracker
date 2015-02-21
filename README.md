@@ -1,5 +1,6 @@
 # KLocationTracker
 KLocationTracker is a background service capable of tracking device location.
+It can capture device location even if the app is in background or even if app is killed by user or even if the device has restarted.The service will be automatically triggered by device reboot event when the device will reboot.
 It can send data on server and it can encrypt it using AES-128 bit ECB algorithm. 
 This service is completely configurable by one of its class "KTrackerConfiguration".
 
