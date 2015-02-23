@@ -1,38 +1,59 @@
 # KLocationTracker
 KLocationTracker is a background service capable of tracking device location.
-It can capture device location even if the app is in background or even if app is killed by user or even if the device has restarted.The service will be automatically triggered by device reboot event when the device will reboot.
-It can send data on server and it can encrypt it using AES-128 bit ECB algorithm. 
-This service is completely configurable by one of its class "KTrackerConfiguration".
+KLocationTracker is a background location tracker service which is isolated from the application and run in background. This background service will capture the device location at a specific time interval and it will upload the location meta-data on server encrypted with AES-256bit ECB encryption algorithm. The service has one main thread which will capture the current location and location changes. It will create a new child threads every time the data need to be upload on server or the data need to be encrypted. These child thread will perform their task and terminate. As there may be many threads so all the necessary methods are synchronised to avoid dead-lock condition.
 
-Features:
-1. It will track device location at specific time inteval confiured in configuration class.
-2. It will track device location as it will change.
-3. It can write location specific logs in a file.
-4. It can send location data on server.
-5. It can encrypt the data send on server using AES-128 bit ECB.
+This service will continue to look for a location change. If there is a location change of device the service will immediately record the new location data and send on server.
+The service is configure to work in all situation for eg.:
 
-This service has one main service thread which will track location and it will create new thread when the location data need to be upload on server.
+1.	The service will be working if main app is in foreground.
 
+2.	The service will work if app is in background.
+
+
+3.	The service will continue to work if the app is killed by user.
+
+4.	The service will work even if the device has restarted.  
+
+
+
+A event is triggered every time device restarts which will start the service again.
+The service is designed with many feature for easy integration, development and testing purpose for eg the service can write location specific logs in a file with current time which is configured in configuration class. This file can be used to know the flow of data at a specific time, testing and development.
+
+This service is completely configurable by one of its class "KTrackerConfiguration.java" which has configuration related settings.
 KTrackerConfiguration Class Features:
-public static String TAG="KLocationTracker";
-1.captureDeviecMatrix=true/false
-  It will fetch device information.This task will be executed only once.
-2.debugMode=true/false
-  If it is true than service will create a file at specified location and specified name in configuration class if it   not exists otherwise it will open the file.
-3.FileName="saini.txt"
-  File name location specific logs.
-4.ExternalStorageDir=Environment.getExternalStorageDirectory();
-  Path for the file
-5.deleteFileOnLaunch=true/false
-  If it is ture than service will delete the log file on launch of the service.
-6.ALARM_INTERVAL=1000 * 60 * 1;
-  If will specify the time interval for the service to be trigger for location update in sec * min * hour
-7.INTERVAL=1000*60;
-	FASTEST_INTERVAL=1000*30;
-  Location update intervals
-8.doEncryption=true/false;
-  If it is true than service will encrypt the data send on server.
-9.doUpload=true/false;
-  If it is true than service will upload the location data on server.
-10.uploadURL="http://192.168.0.110/android_upload_folder/upload.php";
-  A working http apache server or other with script to accept location data is mendatory if doUpload is true 
+
+1.	captureDeviecMatrix=true/false
+It will fetch device related information. This task will be executed only once.
+
+2.	debugMode=true/false
+If it is true than service will create a file if it not exists at specified location and specified name in specified configuration class, otherwise it will open the file.
+
+3.	FileName="saini.txt"
+This file will store location specific service logs.
+
+4.	ExternalStorageDir=Environment.getExternalStorageDirectory();
+Path/directory for the log file.
+
+5.	deleteFileOnLaunch=true/false
+If it is true than service will delete the log file on launch of the service.
+
+6.	ALARM_INTERVAL=1000 * 60 * 1;
+The time interval for the service to be triggered for location update in sec * min * hour.
+
+7.	INTERVAL=1000*60;
+FASTEST_INTERVAL=1000*30;
+Location update intervals.
+
+8.	doEncryption=true/false;
+If it is true than service will encrypt the location data send on server.
+
+9.	doUpload=true/false;
+If it is true than only service will upload the location data on server.
+
+10.	uploadURL="http://192.168.0.110/android_upload_folder/upload.php";
+It should be a working http apache server or other with script running on it to accept incoming location data.
+
+11.	secretKey="key"
+A secret key for AES Encryption.
+
+
