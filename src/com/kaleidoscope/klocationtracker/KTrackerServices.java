@@ -6,7 +6,6 @@ import org.json.JSONObject;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.internal.kl;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -131,6 +130,7 @@ public class KTrackerServices extends Service implements GoogleApiClient.Connect
 						fileManager.writeLocation("Error in json creation :"+e.getLocalizedMessage());
 					}
 					new KTrackerUploadServices().execute(jsonData);
+					Log.d(KTrackerConfiguration.TAG, "in ktrackerservices :"+jsonData.toString());
 				}
 			}
 		}

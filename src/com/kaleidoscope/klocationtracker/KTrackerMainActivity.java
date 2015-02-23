@@ -22,7 +22,7 @@ public class KTrackerMainActivity extends ActionBarActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		
+		 
 		context=KTrackerMainActivity.this;
 		intent=new Intent(context, KTrackerServices.class);
 		pintentIntent=PendingIntent.getService(context, 0, intent, 0); 
