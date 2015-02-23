@@ -4,10 +4,17 @@ KLocationTracker is a background location tracker service which is isolated from
 
 This service will continue to look for a location change. If there is a location change of device the service will immediately record the new location data and send on server.
 The service is configure to work in all situation for eg.:
-1.	 The service will be working if main app is in foreground.
+
+1.	The service will be working if main app is in foreground.
+
 2.	The service will work if app is in background.
+
+
 3.	The service will continue to work if the app is killed by user.
+
 4.	The service will work even if the device has restarted.  
+
+
 
 A event is triggered every time device restarts which will start the service again.
 The service is designed with many feature for easy integration, development and testing purpose for eg the service can write location specific logs in a file with current time which is configured in configuration class. This file can be used to know the flow of data at a specific time, testing and development.
@@ -48,3 +55,8 @@ It should be a working http apache server or other with script running on it to 
 
 11.	secretKey="key"
 A secret key for AES Encryption.
+
+Thanks & Regards,
+Gautam Saini (ASE)
++91-8374558862
+
