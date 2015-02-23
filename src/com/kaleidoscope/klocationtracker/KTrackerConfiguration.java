@@ -29,7 +29,9 @@ public class KTrackerConfiguration {
 	//configuration related to encryption of location data
 	public static boolean doEncryption=true;
 	public static boolean doUpload=true;
-	public static String uploadURL="http://192.168.0.110/android_upload_folder/upload.php";
-	public static int UPLOAD_LOCATION_DATA=1;
-	public static int UPLOAD_DEVICE_MATRIX=2;
+	public static String uploadURL="http://172.20.10.2/android_upload_folder/upload.php";
+	public static String secretKey="Secret_Key";
+	public static int encryptionBit=32; //32 bytes = 256 bit
+	public static String initializationVector = "4f339d11157e7388";//CryptLib.generateRandomIV(16); //16 bytes = 128 bit
+	
 }

@@ -12,6 +12,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.json.JSONObject;
 import android.os.AsyncTask;
+import android.util.Log;
 
 public class KTrackerUploadServices extends AsyncTask<JSONObject, Void, Void>{
 	KFileManager fileManager=null;
@@ -38,10 +39,15 @@ public class KTrackerUploadServices extends AsyncTask<JSONObject, Void, Void>{
 					String locationString;
 					List<NameValuePair> postData=new ArrayList<NameValuePair>();
 					if(KTrackerConfiguration.doEncryption)
-						locationString=aesEncryption.encryptLocationData(jObject.toString());
+					{
+						Log.d(KTrackerConfiguration.TAG, "befre enc :"+jObject.toString());
+						String key=aesEncryption.SHA256(KTrackerConfiguration.secretKey, KTrackerConfiguration.encryptionBit);
+						locationString=aesEncryption.encrypt(jObject.toString(),key,KTrackerConfiguration.initializationVector);
+						Log.d(KTrackerConfiguration.TAG, "after enc :"+locationString);
+					}
 					else
 						locationString=jObject.toString();
-					fileManager.writeLocation("location string :"+locationString);
+					fileManager.writeLocation("location string :"+"\n"+locationString);
 					postData.add(new BasicNameValuePair("data", locationString));
 					UrlEncodedFormEntity entity=new UrlEncodedFormEntity(postData);
 					entity.setContentEncoding(HTTP.UTF_8);
@@ -52,14 +58,14 @@ public class KTrackerUploadServices extends AsyncTask<JSONObject, Void, Void>{
 					{
 						fileManager.writeLocation("Data uploaded:"+"\n"+jObject.toString());
 					}else{
-						fileManager.writeLocation("Upload error..server respond with code :"+statusCode);
+						fileManager.writeLocation("Upload error..server respond with code :"+"\n"+statusCode);
 					}
 				}	
 		}catch(Exception e)
 		{
 			fileManager.writeLocation("failed to upload error:"+e);
 		}
-		fileManager.writeLocation("upload finished..");
+		
 		return null;
 	}
 }

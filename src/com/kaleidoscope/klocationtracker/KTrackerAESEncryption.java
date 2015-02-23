@@ -1,66 +1,254 @@
 package com.kaleidoscope.klocationtracker;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.CipherInputStream;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import android.util.Base64;
+
+
+import java.security.SecureRandom;
+
+	/*****************************************************************
+	 * CrossPlatform CryptLib
+	 * 
+	 * <p>
+	 * This cross platform CryptLib uses AES 256 for encryption. This library can
+	 * be used for encryptoion and de-cryption of string on iOS, Android and Windows
+	 * platform.<br/>
+	 * Features: <br/>
+	 * 1. 256 bit AES encryption
+	 * 2. Random IV generation. 
+	 * 3. Provision for SHA256 hashing of key. 
+	 * </p>
+	 * 
+	 * @since 1.0
+	 * @author navneet
+	 *****************************************************************/
+	 
 public class KTrackerAESEncryption {
-	
-	KFileManager fileManager;
+
+	/**
+	 * Encryption mode enumeration
+	 */
+	private enum EncryptMode {
+		ENCRYPT, DECRYPT;
+	}
+
+	// cipher to be used for encryption and decryption
+	Cipher _cx;
+
+	// encryption key and initialization vector
+	byte[] _key, _iv;
+
 	public KTrackerAESEncryption() {
-		fileManager=new KFileManager();
-	}
-	public String encryptLocationData(String locationData)
-	{	
-		fileManager.writeLocation("Encrypting data..");
-		String encryptedMSG="";
-		byte[] messageBytes=locationData.getBytes();
-		//shared secret
-		byte[] key = new byte[] {  0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
-                0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f};
-		String padding = "ISO10126Padding"; //"ISO10126Padding", "PKCS5Padding"
-		fileManager.writeLocation("Key is :"+new String(KBase64Encoder.encode(key)));
-		byte[] encryptedMessage = encryptMessage(key, padding, messageBytes);
-		encryptedMSG=new String(KBase64Encoder.encode(encryptedMessage));
-		return encryptedMSG;
-	}
-	public static byte[] encryptMessage(byte[] keyBytes, String sPadding, byte[] messageBytes){
-        Cipher cipher = getAESECBEncryptor(keyBytes, sPadding);
-        return encrypt(cipher, messageBytes);
-	}
-	public static Cipher getAESECBEncryptor(byte[] keyBytes, String padding){
-        SecretKeySpec key = new SecretKeySpec(keyBytes, "AES");
-        Cipher cipher = null;
+		// initialize the cipher with transformation AES/CBC/PKCS5Padding
 		try {
-			cipher = Cipher.getInstance("AES/ECB/"+padding);
-			cipher.init(Cipher.ENCRYPT_MODE, key);
-		} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException e) {
+			_cx = Cipher.getInstance("AES/CBC/PKCS5Padding");
+			_key = new byte[32]; //256 bit key space
+			_iv = new byte[16]; //128 bit IV
+		} catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        
-        return cipher;
-    }
-	public static byte[] encrypt(Cipher cipher, byte[] dataBytes){
-        ByteArrayInputStream bIn = new ByteArrayInputStream(dataBytes);
-        CipherInputStream cIn = new CipherInputStream(bIn, cipher);
-        ByteArrayOutputStream bOut = new ByteArrayOutputStream();
-        int ch;
-        try {
-			while ((ch = cIn.read()) >= 0) {
-			  bOut.write(ch);
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		
+	}
+	
+	/**
+	 * Note: This function is no longer used. 
+	 * This function generates md5 hash of the input string
+	 * @param inputString
+	 * @return md5 hash of the input string
+	 */
+	public final String md5(final String inputString) {
+	    final String MD5 = "MD5";
+	    try {
+	        // Create MD5 Hash
+	        MessageDigest digest = java.security.MessageDigest
+	                .getInstance(MD5);
+	        digest.update(inputString.getBytes());
+	        byte messageDigest[] = digest.digest();
+
+	        // Create Hex String
+	        StringBuilder hexString = new StringBuilder();
+	        for (byte aMessageDigest : messageDigest) {
+	            String h = Integer.toHexString(0xFF & aMessageDigest);
+	            while (h.length() < 2)
+	                h = "0" + h;
+	            hexString.append(h);
+	        }
+	        return hexString.toString();
+
+	    } catch (NoSuchAlgorithmException e) {
+	        e.printStackTrace();
+	    }
+	    return "";
+	}
+	
+	/**
+	 * 
+	 * @param _inputText
+	 *            Text to be encrypted or decrypted
+	 * @param _encryptionKey
+	 *            Encryption key to used for encryption / decryption
+	 * @param _mode
+	 *            specify the mode encryption / decryption
+	 * @param _initVector
+	 * 	      Initialization vector
+	 * @return encrypted or decrypted string based on the mode
+	 * @throws UnsupportedEncodingException
+	 * @throws InvalidKeyException
+	 * @throws InvalidAlgorithmParameterException
+	 * @throws IllegalBlockSizeException
+	 * @throws BadPaddingException
+	 */
+	 	private String encryptDecrypt(String _inputText, String _encryptionKey,
+			EncryptMode _mode, String _initVector) throws UnsupportedEncodingException,
+			InvalidKeyException, InvalidAlgorithmParameterException,
+			IllegalBlockSizeException, BadPaddingException {
+		String _out = "";// output string
+		//_encryptionKey = md5(_encryptionKey);
+		//System.out.println("key="+_encryptionKey);
+		
+		int len = _encryptionKey.getBytes("UTF-8").length; // length of the key	provided
+		
+		if (_encryptionKey.getBytes("UTF-8").length > _key.length)
+		len = _key.length;
+		
+		int ivlen = _initVector.getBytes("UTF-8").length;
+		
+		if(_initVector.getBytes("UTF-8").length > _iv.length)
+			ivlen = _iv.length;
+		
+		System.arraycopy(_encryptionKey.getBytes("UTF-8"), 0, _key, 0, len);
+		System.arraycopy(_initVector.getBytes("UTF-8"), 0, _iv, 0, ivlen);
+		SecretKeySpec keySpec = new SecretKeySpec(_key, "AES"); // Create a new SecretKeySpec
+									// for the
+									// specified key
+									// data and
+									// algorithm
+									// name.
+		
+		IvParameterSpec ivSpec = new IvParameterSpec(_iv); // Create a new
+								// IvParameterSpec
+								// instance with the
+								// bytes from the
+								// specified buffer
+								// iv used as
+								// initialization
+								// vector.
+
+		// encryption
+		if (_mode.equals(EncryptMode.ENCRYPT)) {
+			// Potentially insecure random numbers on Android 4.3 and older.
+			// Read
+			// https://android-developers.blogspot.com/2013/08/some-securerandom-thoughts.html
+			// for more info.
+			_cx.init(Cipher.ENCRYPT_MODE, keySpec, ivSpec);// Initialize this cipher instance
+			byte[] results = _cx.doFinal(_inputText.getBytes("UTF-8")); // Finish
+										// multi-part
+										// transformation
+										// (encryption)
+			_out = Base64.encodeToString(results, Base64.DEFAULT); // ciphertext output
+			//_out=Base64Java.encodeBytes(results);
+			
 		}
-        return bOut.toByteArray();
-    }
+ 
+		return _out; // return encrypted/decrypted string
+	}
+
+	/***
+	 * This function computes the SHA256 hash of input string
+	 * @param text input text whose SHA256 hash has to be computed
+	 * @param length length of the text to be returned
+	 * @return returns SHA256 hash of input text 
+	 * @throws NoSuchAlgorithmException
+	 * @throws UnsupportedEncodingException
+	 */
+	public String SHA256 (String text, int length) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+
+	    String resultStr;
+		MessageDigest md = MessageDigest.getInstance("SHA-256");
+
+	    md.update(text.getBytes("UTF-8"));
+	    byte[] digest = md.digest();
+	    
+	    StringBuffer result = new StringBuffer();
+	    for (byte b : digest) {
+	        result.append(String.format("%02x", b)); //convert to hex
+	    }
+	    //return result.toString();
+	    
+	    if(length > result.toString().length())
+	    {
+	    	resultStr = result.toString();
+	    }
+	    else 
+	    {
+	    	resultStr = result.toString().substring(0, length);
+	    }
+
+	    return resultStr;
+	    
+	}
+	
+	/***
+	 * This function encrypts the plain text to cipher text using the key
+	 * provided. You'll have to use the same key for decryption
+	 * 
+	 * @param _plainText
+	 *            Plain text to be encrypted
+	 * @param _key
+	 *            Encryption Key. You'll have to use the same key for decryption
+	 * @param _iv
+	 * 	    initialization Vector
+	 * @return returns encrypted (cipher) text
+	 * @throws InvalidKeyException
+	 * @throws UnsupportedEncodingException
+	 * @throws InvalidAlgorithmParameterException
+	 * @throws IllegalBlockSizeException
+	 * @throws BadPaddingException
+	 */
+	 
+	public String encrypt(String _plainText, String _key, String _iv)
+			throws InvalidKeyException, UnsupportedEncodingException,
+			InvalidAlgorithmParameterException, IllegalBlockSizeException,
+			BadPaddingException {
+		return encryptDecrypt(_plainText, _key, EncryptMode.ENCRYPT, _iv);
+	}
+	
+	
+	/**
+ 	* this function generates random string for given length
+ 	* @param length
+ 	* 				Desired length
+ 	* * @return 
+ 	*/
+	public String generateRandomIV(int length)
+	{
+		SecureRandom ranGen = new SecureRandom();
+		byte[] aesKey = new byte[16];
+		ranGen.nextBytes(aesKey);
+		StringBuffer result = new StringBuffer();
+	    for (byte b : aesKey) {
+	        result.append(String.format("%02x", b)); //convert to hex
+	    }
+	    if(length> result.toString().length())
+	    {
+	    	return result.toString();
+	    }
+	    else
+	    {
+	    	return result.toString().substring(0, length);
+	    }
+	}
 }
