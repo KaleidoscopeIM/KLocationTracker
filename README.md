@@ -56,7 +56,4 @@ It should be a working http apache server or other with script running on it to 
 11.	secretKey="key"
 A secret key for AES Encryption.
 
-Thanks & Regards,
-Gautam Saini (ASE)
-+91-8374558862
 
