@@ -202,7 +202,6 @@ public class KTrackerServices extends Service implements GoogleApiClient.Connect
 				{
 					new KUploadServices().execute(jsonData);
 				}
-		 
 	}
 	public boolean isGeoLocationAvailable() {
 		KTrackerConfiguration.isGPSAvailable=locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
