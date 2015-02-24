@@ -13,6 +13,10 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
+
+
     
     <application
         android:allowBackup="true"
@@ -26,9 +30,9 @@
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
+				<category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            
         </activity>
         <service
             android:name="com.kaleidoscope.klocationtracker.KTrackerServices"
@@ -42,6 +46,13 @@
             android:exported="false" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name="com.kaleidoscope.ktrackerbroadcast.KTrackerUIUpdater" 
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.kaleidoscope.klocationtracker.action.msgReceiver"></action>
             </intent-filter>
         </receiver>
     </application>

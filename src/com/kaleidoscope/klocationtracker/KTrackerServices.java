@@ -6,9 +6,12 @@ import org.json.JSONObject;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.internal.br;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.kaleidoscope.ktrackerbroadcast.KTrackerBroadcastLocation;
+
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -31,6 +34,7 @@ public class KTrackerServices extends Service implements GoogleApiClient.Connect
 	KFileManager fileManager=null;
 	LocationManager locationManager;
 	boolean canGetLocation;
+	KTrackerBroadcastLocation broadcastLocation;
 	
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -51,6 +55,7 @@ public class KTrackerServices extends Service implements GoogleApiClient.Connect
 			}
 		} 
 		fileManager=new KFileManager();
+		broadcastLocation=new KTrackerBroadcastLocation();
 		fileManager.writeLocation("service created/initialized..");
 		locationManager=(LocationManager)getSystemService(Context.LOCATION_SERVICE);
 		buildGoogleApiClient();
@@ -65,7 +70,7 @@ public class KTrackerServices extends Service implements GoogleApiClient.Connect
 		if(mGoogleApiClient!=null)
 			mGoogleApiClient.connect();
 		else
-			fileManager.writeLocation("Google API Client is null");
+			fileManager.writeLocation("Google API Client is null");	
 	}
 	
 	@Override
@@ -129,7 +134,7 @@ public class KTrackerServices extends Service implements GoogleApiClient.Connect
 						// TODO Auto-generated catch block
 						fileManager.writeLocation("Error in json creation :"+e.getLocalizedMessage());
 					}
-					new KTrackerUploadServices().execute(jsonData);
+					new KUploadServices().execute(jsonData);
 					Log.d(KTrackerConfiguration.TAG, "in ktrackerservices :"+jsonData.toString());
 				}
 			}
@@ -165,7 +170,7 @@ public class KTrackerServices extends Service implements GoogleApiClient.Connect
 				// TODO Auto-generated catch block
 				fileManager.writeLocation("Error in json creation :"+e.getLocalizedMessage());
 			}
-			new KTrackerUploadServices().execute(jsonData);
+			new KUploadServices().execute(jsonData);
 		}
 		LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
 	}
@@ -189,13 +194,14 @@ public class KTrackerServices extends Service implements GoogleApiClient.Connect
 				}catch(JSONException e)
 				{
 					fileManager.writeLocation("Exception found in writing JSON :"+e.getLocalizedMessage());
-				}
+				} 
+				KTrackerConfiguration.deviceMatrix=jsonData.toString();
+				fileManager.writeLocation("Device Info:"+"\n"+jsonData.toString());
+				broadcastLocation.broadcastMessage(jsonData.toString(), this);
 				if(KTrackerConfiguration.doUpload)
 				{
-					new KTrackerUploadServices().execute(jsonData);
+					new KUploadServices().execute(jsonData);
 				}
-				//fileManager.writeLocation("Device Info:"+jsonData.toString());
-				KTrackerConfiguration.deviceMatrix=jsonData.toString();
 		 
 	}
 	public boolean isGeoLocationAvailable() {
