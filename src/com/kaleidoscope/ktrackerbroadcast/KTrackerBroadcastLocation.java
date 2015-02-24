@@ -19,7 +19,7 @@ public class KTrackerBroadcastLocation extends Activity{
 	}
 	public void broadcastMessage(String locationData,KTrackerServices kTrackerServices) {
 			
-			handler.postDelayed(sendMSG,5000);
+			handler.postDelayed(sendMSG,1000);
 			lData=locationData;
 			serviceActivity=kTrackerServices;
 	}

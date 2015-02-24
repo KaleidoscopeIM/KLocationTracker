@@ -109,11 +109,13 @@ public class KTrackerServices extends Service implements GoogleApiClient.Connect
 	public void onConnected(Bundle connectionHint) {
 		// TODO Auto-generated method stub
 		fileManager.writeLocation("Successfully Connected to Google Client API Services..");
+		
 		if(mCurrentLocation==null)
 		{
 			mCurrentLocation=LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 			if(mCurrentLocation!=null)
 			{
+				
 				fileManager.writeLocation("Got Last Location from FusedLocationAPI..");
 				fileManager.writeLocation("Latitude :"+mCurrentLocation.getLatitude());
 				fileManager.writeLocation("Longitude :"+mCurrentLocation.getLongitude());
@@ -136,6 +138,12 @@ public class KTrackerServices extends Service implements GoogleApiClient.Connect
 					}
 					new KUploadServices().execute(jsonData);
 					Log.d(KTrackerConfiguration.TAG, "in ktrackerservices :"+jsonData.toString());
+				}
+				if(KTrackerConfiguration.updateUI)
+				{
+					String localString;
+					localString="Latitude :"+mCurrentLocation.getLatitude()+"\n"+"Longitude :"+mCurrentLocation.getLongitude()+"\n"+"Provider :"+mCurrentLocation.getProvider();
+					broadcastLocation.broadcastMessage(localString, this);		
 				}
 			}
 		}
@@ -171,6 +179,11 @@ public class KTrackerServices extends Service implements GoogleApiClient.Connect
 				fileManager.writeLocation("Error in json creation :"+e.getLocalizedMessage());
 			}
 			new KUploadServices().execute(jsonData);
+		}
+		if(KTrackerConfiguration.updateUI)
+		{
+			String localString="Latitude"+ mCurrentLocation.getLatitude()+"\n"+"Longitude"+mCurrentLocation.getLongitude()+"\n"+"Provider :"+mCurrentLocation.getProvider();
+			broadcastLocation.broadcastMessage(localString, this);
 		}
 		LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
 	}
