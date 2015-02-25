@@ -14,14 +14,14 @@ import org.json.JSONObject;
 import android.os.AsyncTask;
 import android.util.Log;
 
-public class KTrackerUploadServices extends AsyncTask<JSONObject, Void, Void>{
+public class KUploadServices extends AsyncTask<JSONObject, Void, Void>{
 	KFileManager fileManager=null;
 	HttpClient httpClient;
 	HttpPost httpPost;
 	HttpResponse httpResponse;
 	int statusCode;
 	KTrackerAESEncryption aesEncryption;
-	public KTrackerUploadServices() {
+	public KUploadServices() {
 		// TODO Auto-generated constructor stub
 		fileManager=new KFileManager();
 		httpClient=new DefaultHttpClient();

@@ -25,16 +25,20 @@ public class KFileManager extends Activity{
 	                file.createNewFile(); 
 	                Log.d(KTrackerConfiguration.TAG, "create file at :"+file.getAbsolutePath());
 	            } 
-	            else
-	            Log.d(KTrackerConfiguration.TAG, "file already at"+file.getAbsolutePath());
+	           
+	           // Log.d(KTrackerConfiguration.TAG, "file already at"+file.getAbsolutePath());
 	            FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
 	            BufferedWriter bw = new BufferedWriter(fw);
 	            bw.write(getLocationTime()+str+"\n");
 	            bw.flush();
 	            bw.close();
-	            
+	             
+			}else
+			{
+				if(isFileExists())
+					file.delete();
 			}
-            Log.d(KTrackerConfiguration.TAG,"done");
+            //Log.d(KTrackerConfiguration.TAG,"done");
         } catch (IOException e) {
             e.printStackTrace();
             Log.d(KTrackerConfiguration.TAG, "error in writing in file");

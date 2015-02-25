@@ -17,12 +17,23 @@
         />
 
     <TextView
+        android:id="@+id/locationData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/textView2"
+        android:layout_alignRight="@+id/textView2"
+        android:layout_below="@+id/textView2"
+        android:layout_marginTop="19dp"
+        android:text="Small Text"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/textView1"
         android:layout_below="@+id/textView1"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="14dp"
         android:text="Check KTrackerConfiguration class for configuration settings"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
