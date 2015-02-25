@@ -20,7 +20,7 @@ public class KTrackerBroadcastServices extends BroadcastReceiver{
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		
-		if(intent.getAction()==Intent.ACTION_BOOT_COMPLETED)
+		if(intent.getAction()==Intent.ACTION_BOOT_COMPLETED) 
 		{ 
 			KFileManager fileManager=new KFileManager();
 			fileManager.writeLocation("Device reboot complete..");
