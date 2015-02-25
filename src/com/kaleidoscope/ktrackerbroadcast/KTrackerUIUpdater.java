@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.kaleidoscope.klocationtracker.KFileManager;
 import com.kaleidoscope.klocationtracker.KTrackerConfiguration;
 import com.kaleidoscope.klocationtracker.KTrackerMainActivity;
 
