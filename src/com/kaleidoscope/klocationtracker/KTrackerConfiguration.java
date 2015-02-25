@@ -10,6 +10,7 @@ public class KTrackerConfiguration {
 	public static String androidDeviceID="";
 	//it will send broadcast messages to update the UI of the application
 	public static boolean updateUI=true;
+	
 	//check network!GPS Status
 	public static boolean isGPSAvailable;
 	public static boolean isNetworkAvailable;

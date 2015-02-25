@@ -6,12 +6,9 @@ import org.json.JSONObject;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.internal.br;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.kaleidoscope.ktrackerbroadcast.KTrackerBroadcastLocation;
-
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -19,23 +16,20 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
 public class KTrackerServices extends Service implements GoogleApiClient.ConnectionCallbacks,GoogleApiClient.OnConnectionFailedListener,LocationListener{
 
-	GoogleApiClient mGoogleApiClient;
-	LocationRequest mLocationRequest;
-	Location mCurrentLocation=null,mLastLocation=null;
-	String mLatitude;
-	String mLongitude;
-	String mAccuracy;
-	String mAltitude;
-	KFileManager fileManager=null;
-	LocationManager locationManager;
-	boolean canGetLocation;
-	KTrackerBroadcastLocation broadcastLocation;
-	
+	protected GoogleApiClient mGoogleApiClient;
+	protected LocationRequest mLocationRequest;
+	protected Location mCurrentLocation=null;
+	protected KFileManager fileManager=null;
+	protected LocationManager locationManager;
+	public String broadcastAction="com.kaleidoscope.klocationtracker.action.msgReceiver";
+	protected Handler broadcastHandler;
+	protected Intent broadcastIntent;
 	@Override
 	public IBinder onBind(Intent intent) {
 		// TODO Auto-generated method stub
@@ -55,8 +49,9 @@ public class KTrackerServices extends Service implements GoogleApiClient.Connect
 			}
 		} 
 		fileManager=new KFileManager();
-		broadcastLocation=new KTrackerBroadcastLocation();
-		fileManager.writeLocation("service created/initialized..");
+		broadcastIntent=new Intent();
+		broadcastHandler=new Handler();
+		fileManager.writeLocation("Services created..");
 		locationManager=(LocationManager)getSystemService(Context.LOCATION_SERVICE);
 		buildGoogleApiClient();
 		setLocationUpdates();
@@ -142,12 +137,11 @@ public class KTrackerServices extends Service implements GoogleApiClient.Connect
 				if(KTrackerConfiguration.updateUI)
 				{
 					String localString;
-					localString="Latitude :"+mCurrentLocation.getLatitude()+"\n"+"Longitude :"+mCurrentLocation.getLongitude()+"\n"+"Provider :"+mCurrentLocation.getProvider();
-					broadcastLocation.broadcastMessage(localString, this);		
+					localString="Last Location from FusedLocationAPI..\n"+"Latitude :"+mCurrentLocation.getLatitude()+"\n"+"Longitude :"+mCurrentLocation.getLongitude()+"\n"+"Provider :"+mCurrentLocation.getProvider();
+					broadcastLocationData(localString);		
 				}
 			}
-		}
-		
+		}	
 	}
 	@Override
 	public void onConnectionFailed(ConnectionResult result) {
@@ -157,7 +151,7 @@ public class KTrackerServices extends Service implements GoogleApiClient.Connect
 	@Override
 	public void onLocationChanged(Location location) {
 		// TODO Auto-generated method stub
-		fileManager.writeLocation("Location changed..Tracking Location");
+		fileManager.writeLocation("Tracking Location..");
 		mCurrentLocation=location;
 		fileManager.writeLocation("Latitude :"+mCurrentLocation.getLatitude());
 		fileManager.writeLocation("Longitude :"+mCurrentLocation.getLongitude());
@@ -182,11 +176,12 @@ public class KTrackerServices extends Service implements GoogleApiClient.Connect
 		}
 		if(KTrackerConfiguration.updateUI)
 		{
-			String localString="Latitude"+ mCurrentLocation.getLatitude()+"\n"+"Longitude"+mCurrentLocation.getLongitude()+"\n"+"Provider :"+mCurrentLocation.getProvider();
-			broadcastLocation.broadcastMessage(localString, this);
+			String localString="Tracking Location..\n"+"Latitude :"+ mCurrentLocation.getLatitude()+"\n"+"Longitude"+mCurrentLocation.getLongitude()+"\n"+"Provider :"+mCurrentLocation.getProvider();
+			broadcastLocationData(localString);
 		}
 		LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
 	}
+
 	private void fetchDeviceData() {  
 				fileManager.writeLocation("Fetching device data..");
 				JSONObject jsonData=new JSONObject();
@@ -210,12 +205,30 @@ public class KTrackerServices extends Service implements GoogleApiClient.Connect
 				} 
 				KTrackerConfiguration.deviceMatrix=jsonData.toString();
 				fileManager.writeLocation("Device Info:"+"\n"+jsonData.toString());
-				broadcastLocation.broadcastMessage(jsonData.toString(), this);
+				String localString="";
+				localString+="DeviceID :" +KTrackerConfiguration.androidDeviceID+"\n"+
+				"Android Version :"+android.os.Build.VERSION.RELEASE+"\n"+"manufacturer :"+Build.MANUFACTURER
+				+"\n"+"Model :"+ Build.MODEL;
+				broadcastLocationData(localString);
 				if(KTrackerConfiguration.doUpload)
 				{
 					new KUploadServices().execute(jsonData);
 				}
 	}
+	public void broadcastLocationData(String localString) {
+		/*KTrackerBroadcastLocation b=new KTrackerBroadcastLocation();
+		b.broadcastMessage(localString, this);*/
+		broadcastIntent.setAction(broadcastAction);
+		broadcastIntent.putExtra("locationData", localString);
+		broadcastHandler.postDelayed(broadcastMessage,1000);
+	}
+	public Runnable broadcastMessage=new Runnable() {
+		
+		@Override
+		public void run() {
+			sendBroadcast(broadcastIntent);
+		}
+	};
 	public boolean isGeoLocationAvailable() {
 		KTrackerConfiguration.isGPSAvailable=locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 		//fileManager.writeLocation("GPS Location Available :"+KTrackerConfiguration.isGPSAvailable);
