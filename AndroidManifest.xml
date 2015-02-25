@@ -14,10 +14,6 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-
-
-
-    
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -41,14 +37,78 @@
             >         
         </service>
         <receiver
-            android:name="com.kaleidoscope.klocationtracker.KRebootServices"
+            android:name="com.kaleidoscope.ktrackerbroadcast.KTrackerBroadcastServices"
             android:enabled="true"
             android:exported="false" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-        <receiver android:name="com.kaleidoscope.ktrackerbroadcast.KTrackerUIUpdater" 
+        <receiver
+            android:name="com.kaleidoscope.ktrackerbroadcast.KTrackerBroadcastServices"
+            android:enabled="true"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="com.kaleidoscope.ktrackerbroadcast.KTrackerBroadcastServices"
+            android:enabled="true"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="com.kaleidoscope.ktrackerbroadcast.KTrackerBroadcastServices"
+            android:enabled="true"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="android.intent.action.AIRPLANE_MODE" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="com.kaleidoscope.ktrackerbroadcast.KTrackerBroadcastServices"
+            android:enabled="true"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="android.intent.action.BATTERY_LOW" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="com.kaleidoscope.ktrackerbroadcast.KTrackerBroadcastServices"
+            android:enabled="true"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="android.intent.action.DEVICE_STORAGE_LOW" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="com.kaleidoscope.ktrackerbroadcast.KTrackerBroadcastServices"
+            android:enabled="true"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="android.intent.action.SCREEN_OFF" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="com.kaleidoscope.ktrackerbroadcast.KTrackerBroadcastServices"
+            android:enabled="true"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="android.intent.action.SCREEN_ON" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="com.kaleidoscope.ktrackerbroadcast.KTrackerBroadcastServices"
+            android:enabled="true"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="android.intent.action.PROVIDER_CHANGED" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name="com.kaleidoscope.ktrackerbroadcast.KTrackerBroadcastServices" 
             android:enabled="true"
             android:exported="false">
             <intent-filter>
