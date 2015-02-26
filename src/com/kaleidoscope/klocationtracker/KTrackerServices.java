@@ -53,6 +53,7 @@ public class KTrackerServices extends Service implements GoogleApiClient.Connect
 		broadcastHandler=new Handler();
 		fileManager.writeLocation("Services created..");
 		locationManager=(LocationManager)getSystemService(Context.LOCATION_SERVICE);
+		fileManager.writeLocation(KTrackerConfiguration.getConfiguration());
 		buildGoogleApiClient();
 		setLocationUpdates();
 		if(KTrackerConfiguration.deviceMatrix=="")
