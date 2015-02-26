@@ -40,10 +40,10 @@ public class KTrackerMainActivity extends Activity{
 		alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), KTrackerConfiguration.ALARM_INTERVAL, pintentIntent);
 	}
 	
-	/*//it will cancel a repeating task 
+	//it will cancel a repeating task 
 	private void cancelAlarm()
 	{
 		alarmManager.cancel(pintentIntent);
-	}*/
+	}
 	
 }

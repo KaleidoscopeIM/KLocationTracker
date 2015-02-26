@@ -35,5 +35,29 @@ public class KTrackerConfiguration {
 	public static String secretKey="Secret_Key";
 	public static int encryptionBit=32; //32 bytes = 256 bit
 	public static String initializationVector = "4f339d11157e7388";//CryptLib.generateRandomIV(16); //16 bytes = 128 bit
+	public static String getConfiguration()
+	{
+		String localString;
+		localString= "TAG :"+TAG+"\n"
+				+"deviceMatrix :"+deviceMatrix+"\n"
+				+"captureDeviecMatrix :"+captureDeviecMatrix+"\n"
+				+"androidDeviceID :"+androidDeviceID+"\n"
+				+"updateUI :"+updateUI+"\n"
+				+"debugMode :"+debugMode+"\n"
+				+"FileName :"+FileName+"\n"
+				+"ExternalStorageDir :"+ExternalStorageDir.getAbsolutePath()+"\n"
+				+"deleteFileOnLaunch :"+deleteFileOnLaunch+"\n"
+				+"ALARM_INTERVAL :"+ALARM_INTERVAL+"\n"
+				+"INTERVAL :"+INTERVAL+"\n"
+				+"FASTEST_INTERVAL :"+FASTEST_INTERVAL+"\n"
+				+"doEncryption :"+doEncryption+"\n"
+				+"doUpload :"+doUpload+"\n"
+				+"uploadURL :"+uploadURL+"\n"
+				+"secretKey :"+secretKey+"\n"
+				+"encryptionBit :"+encryptionBit+"\n"
+				+"initializationVector :"+initializationVector+"\n"	
+				;
+		return localString;
+	}
 	
 }
