@@ -58,7 +58,7 @@ public class KUploadServices extends AsyncTask<JSONObject, Void, Void>{
 					{
 						fileManager.writeLocation("Data uploaded:"+"\n"+jObject.toString());
 					}else{
-						fileManager.writeLocation("Upload error..server respond with code :"+"\n"+statusCode);
+						fileManager.writeLocation("Upload error..server respond with code :\n"+statusCode);
 					}
 				}	
 		}catch(Exception e)

@@ -12,9 +12,9 @@ public class KTrackerUIUpdater extends BroadcastReceiver{
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		// TODO Auto-generated method stub
-		String data=intent.getStringExtra("locationData");
-		Log.d(KTrackerConfiguration.TAG, "Data reveived in receiver :"+data);
-		KTrackerMainActivity.tv.setText(data);
+		if(intent.getAction()==Intent.ACTION_BOOT_COMPLETED)
+		{
+			
+		}
 	}
-	
 }
